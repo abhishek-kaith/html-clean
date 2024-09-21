@@ -17,6 +17,8 @@ function Editor() {
     const [value, setValue] = useState('<h1>hello</h1>');
     const [code, setCode] = useState('<h1>hello</h1>');
 
+    
+
     return (
         <section className='container'>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -25,8 +27,11 @@ function Editor() {
                     onChange={(value) => {
                         setValue(value);
                     }}
-                    onKeyDown={() => {
-                        setCode(value);
+                    onBlur={() => {
+                        setCode(format(value));
+                    }}
+                    onKeyUp={() => {
+                        setCode(format(value));
                     }}
                     placeholder='Hello World!'
                     modules={modules}
@@ -45,9 +50,9 @@ function Editor() {
                 />
             </div>
             <button
-                className='bg-black text-white px-4 py-2 rounded-md mt-4'
+                className='mt-4 rounded-md bg-black px-4 py-2 text-white'
                 onClick={() => {
-                    const clean = sanitizeHtml(code);
+                    const clean = sanitizeHtml(format(code));
                     setValue(clean);
                     setCode(clean);
                 }}
@@ -71,5 +76,9 @@ const modules = {
         ['link', 'image'],
     ],
 };
+
+function format(html: string): string {
+    return html.replace(/<\/\s*([a-zA-Z][\w-]*)\s*>/g, '$&\n');
+}
 
 export default Editor;
